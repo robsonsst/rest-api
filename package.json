@@ -1,0 +1,27 @@
+{
+  "name": "rest-api",
+  "version": "1.0.0",
+  "description": "REST API para a disiplina Integração de Sistemas",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robsonsst/rest-api.git"
+  },
+  "keywords": [
+    "node",
+    "integração",
+    "crud"
+  ],
+  "author": "Robson Santos Santana e Saulo Cruz Benevides",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/robsonsst/rest-api/issues"
+  },
+  "homepage": "https://github.com/robsonsst/rest-api#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
