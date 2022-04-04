@@ -8,8 +8,15 @@ router.get('/', (req, res, next) => {
         if(error){
             return res.status(500).send({error: error});
         }
-        conn.query(
-            'SELECT * FROM disciplina',
+        conn.query(`SELECT disciplina.id_disciplina,
+                           disciplina.nome_disciplina,
+                           disciplina.codigo,
+                           disciplina.semestre,
+                           professor.id_professor,
+                           professor.nome
+                        FROM disciplina
+                    INNER JOIN professor
+                        ON professor.id_professor = disciplina.id_professor;`,
             (error, result, fields) => {
                 if(error){
                     return res.status(500).send({error: error});
@@ -18,11 +25,14 @@ router.get('/', (req, res, next) => {
                     quantidade: result.length,
                     disciplinas: result.map(disciplina => {
                         return {
-                            id_disciplina: disciplina.id_disciplina,
-                            id_professor: disciplina.id_professor,
-                            nome: disciplina.nome,
+                            id: disciplina.id_disciplina,
+                            nome: disciplina.nome_disciplina,
                             codigo: disciplina.codigo,
                             semestre: disciplina.semestre,
+                            professor: {
+                                id: disciplina.id_professor,
+                                nome: disciplina.nome
+                            },
                             request: {
                                 tipo: 'GET',
                                 descricao: 'Retorna os detalhes de uma disciplina específica',
@@ -59,12 +69,12 @@ router.post('/', (req, res, next) => {
                 }
                 conn.query(
                     `INSERT INTO disciplina 
-                        (id_professor, nome, codigo, semestre) 
+                        (id_professor, nome_disciplina, codigo, semestre) 
                     VALUES 
                         (?, ?, ?, ?);`,
                     [                        
                         req.body.id_professor,
-                        req.body.nome,
+                        req.body.nome_disciplina,
                         req.body.codigo, 
                         req.body.semestre
                     ],
@@ -80,7 +90,7 @@ router.post('/', (req, res, next) => {
                             disciplinaCriado: {
                                 id_disciplina: result.id_disciplina,
                                 id_professor: req.body.id_professor,
-                                nome: req.body.nome,
+                                nome_disciplina: req.body.nome_disciplina,
                                 codigo: req.body.codigo,
                                 semestre: req.body.semestre,
                                 request: {
@@ -104,8 +114,16 @@ router.get('/:id_disciplina', (req, res, next) => {
         if(error){
             return res.status(500).send({error: error});
         }
-        conn.query(
-            'SELECT * FROM disciplina WHERE id_disciplina = ?;',
+        conn.query(`SELECT  disciplina.id_disciplina,
+                            disciplina.nome_disciplina,
+                            disciplina.codigo,
+                            disciplina.semestre,
+                            professor.id_professor,
+                            professor.nome
+                        FROM disciplina
+                    INNER JOIN professor
+                        ON professor.id_professor = disciplina.id_professor
+                        WHERE id_disciplina = ?;`,
             [req.params.id_disciplina],
             (error, result, fields) => {
                 if(error){
@@ -119,11 +137,14 @@ router.get('/:id_disciplina', (req, res, next) => {
                 }
                 const response = {                         
                     disciplina: {
-                        id_disciplina: result[0].id_disciplina,
-                        id_professor: result[0].id_professor,
-                        nome: result[0].nome,
+                        id: result[0].id_disciplina,                        
+                        nome: result[0].nome_disciplina,
                         codigo: result[0].codigo,
-                        semestre: result[0].semestre,                    
+                        semestre: result[0].semestre,
+                        professor: {
+                            id: result[0].id_professor,
+                            nome: result[0].nome
+                        },
                         request: {
                             tipo: 'GET',
                             descricao: 'Retorna todas as disciplinas',
@@ -146,13 +167,13 @@ router.patch('/', (req, res, next) => {
         conn.query(
             `UPDATE disciplina
                 SET id_professor = ?,
-                    nome = ?,                    
+                    nome_disciplina = ?,                    
                     codigo = ?,
                     semestre = ?
               WHERE id_disciplina = ?`,
             [
                 req.body.id_professor,
-                req.body.nome, 
+                req.body.nome_disciplina, 
                 req.body.codigo,
                 req.body.semestre,
                 req.body.id_disciplina
@@ -166,7 +187,7 @@ router.patch('/', (req, res, next) => {
                     disciplinaAtualizado: {
                         id_disciplina: req.body.id_disciplina,
                         id_professor: req.body.id_professor,
-                        nome: req.body.nome,
+                        nome_disciplina: req.body.nome_disciplina,
                         codigo: req.body.codigo,
                         semestre: req.body.semestre,                        
                         request: {
@@ -204,7 +225,7 @@ router.delete('/', (req, res, next) => {
                         url: 'https://localhost:3001/disciplina',
                         body: {
                             id_professor:'Number',
-                            nome: 'String',
+                            nome_disciplina: 'String',
                             codigo: 'String',
                             semestre: 'Number'                            
                         }

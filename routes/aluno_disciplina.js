@@ -8,8 +8,15 @@ router.get('/', (req, res, next) => {
         if(error){
             return res.status(500).send({error: error});
         }
-        conn.query(
-            'SELECT * FROM aluno_disciplina',
+        conn.query(`SELECT aluno.id_aluno,
+                           aluno.nome_aluno,
+                           disciplina.id_disciplina,
+                           disciplina.nome_disciplina, 
+                           aluno_disciplina.situacao
+                        FROM aluno_disciplina, aluno, disciplina
+                    WHERE aluno.id_aluno = aluno_disciplina.id_aluno 
+                    AND 
+                    disciplina.id_disciplina = aluno_disciplina.id_disciplina;`,
             (error, result, fields) => {
                 if(error){
                     return res.status(500).send({error: error});
@@ -19,7 +26,9 @@ router.get('/', (req, res, next) => {
                     alunos_disciplinas: result.map(ad => {
                         return {
                             id_aluno: ad.id_aluno,
+                            nome_aluno: ad.nome_aluno,
                             id_disciplina: ad.id_disciplina,
+                            nome_disciplina: ad.nome_disciplina,
                             situacao: ad.situacao,
                             request: {
                                 tipo: 'GET',
@@ -109,79 +118,6 @@ router.get('/:id_aluno', (req, res, next) => {
                     }
                 }
                 return res.status(200).send(response);
-            }
-        ) 
-    })
-});
-
-//Altera um aluno_disciplina
-router.patch('/', (req, res, next) => {
-    mysql.getConnection((error, conn) => {
-        if(error){
-            return res.status(500).send({error: error});
-        }
-        conn.query(
-            `UPDATE aluno_disciplina
-                SET id_aluno = ?,
-                    id_disciplina = ?,
-                    situacao = ?
-              WHERE id_aluno = ?`,
-            [
-                req.body.situacao, 
-                req.body.id_aluno, 
-                req.body.id_disciplina
-            ],
-            (error, result, fields) => {
-                if(error){
-                    return res.status(500).send({error: error});
-                }
-                const response = {
-                    mensagem: 'Aluno_disciplina atualizado com sucesso',
-                    alunoDisciplinaAtualizado: {
-                        id_aluno: req.body.id_aluno,
-                        id_disciplina: req.body.id_disciplina,
-                        situacao: req.body.situacao,
-                        request: {
-                            tipo: 'GET',
-                            descricao: 'Retorna os detalhes de um aluno_disciplina específico',
-                            url: 'http://localhost:3001/aluno-disciplina/' + req.body.id_aluno
-                        }
-                    }
-                }
-                return res.status(202).send(response);
-            }
-        ) 
-    })
-});
-
-//Deleta um aluno_disciplina
-router.delete('/', (req, res, next) => {
-    mysql.getConnection((error, conn) => {
-        if(error){
-            return res.status(500).send({error: error});
-        }
-        conn.query(
-            'DELETE FROM aluno_disciplina WHERE id_aluno = ? AND id_disciplina = ?',
-            [req.body.id_aluno],
-            (error, result, fields) => {
-                if(error){
-                    return res.status(500).send({error: error});
-                }
-
-                const responde = {
-                    mensagem: 'Aluno_Disciplina excluído com sucesso!!',
-                    request: {
-                        tipo: 'POST',
-                        descricao: 'Insere um aluno_disciplina',
-                        url: 'https://localhost:3001/aluno-disciplina',
-                        body: {
-                            id_aluno: 'Number',
-                            id_disciplina: 'Number',
-                            situacao: 'String'
-                        }
-                    }
-                }
-                return res.status(202).send(responde);
             }
         ) 
     })
