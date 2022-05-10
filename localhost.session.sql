@@ -1,6 +1,6 @@
-describe disciplina;
+SELECT * FROM disciplina;
+-- 
 
-SELECT * FROM aluno;
 
 SELECT aluno.id_aluno,
                     aluno.nome_aluno,

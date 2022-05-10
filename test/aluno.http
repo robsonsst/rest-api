@@ -1,0 +1,40 @@
+# Get aluno
+GET http://localhost:3001/aluno
+Content-Type: application/json
+###
+
+#Detalhes de um aluno
+GET http://localhost:3001/aluno/20
+Content-Type: application/json
+###
+
+#Insere um aluno
+POST http://localhost:3001/aluno
+Content-Type: application/json
+
+{
+  "id_curso" : 1,
+  "nome_aluno" : "Eudes",
+  "data_nascimento" : "1998/06/13"
+}
+###
+
+#Altera um aluno
+PATCH http://localhost:3001/aluno
+Content-Type: application/json
+
+{
+	"id_aluno": 19,
+	"id_curso": 2,
+	"nome_aluno": "Eudes Souza",
+	"data_nascimento": "1998/10/10"
+}
+###
+
+#Remove aluno 
+DELETE http://localhost:3001/aluno
+Content-Type: application/json
+{
+	"id_aluno": 19
+}
+###
