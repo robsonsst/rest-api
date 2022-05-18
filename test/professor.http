@@ -1,0 +1,4 @@
+#Get professor
+GET http://localhost:3001/professor
+Content-Type: application/json
+###

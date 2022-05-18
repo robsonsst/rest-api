@@ -1,0 +1,4 @@
+#Get aluno-disciplina
+GET http://localhost:3001/aluno-disciplina
+Content-Type: application/json
+###
